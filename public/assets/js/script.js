@@ -1,0 +1,2 @@
+$(window).on("load",function(){$.plot("#bar-chart",[[["Deposits","{!! $deposits !!}"],["Withdrawals","{!! $withdrawals !!}"]]],{series:{bars:{show:!0,barWidth:.6,align:"center",lineWidth:0,fill:!0,fillColor:{colors:[{opacity:.2},{opacity:.8}]}}},yaxis:{min:0},xaxis:{mode:"categories",tickLength:0},grid:{borderWidth:1,borderColor:"transparent",color:"#999",minBorderMargin:20,labelMargin:10,margin:{top:8,bottom:20,left:20}},colors:["#4D0096"]})});
+
