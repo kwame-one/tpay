@@ -66,20 +66,23 @@
                                     <table class="table table-striped table-bordered zero-configuration">
                                         <thead>
                                             <tr>
-                                                <th>QR Code</th>
-                                                <th>Taken</th>
-                                                <th>Acitvated</th>
-                                                <th>Action</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Contact</th>
+                                                <th>Added On</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                              <td>sadssa</td>
-                                              <td>sadssa</td>
-                                              <td>sadssa</td>
-                                              <td>sadssa</td>
+                                           @foreach($admins as $admin)
 
-                                            </tr>
+                                              <tr>
+                                                <td>{{ $admin->surname }} {{ $admin->other_names }}</td>
+                                                <td>{{ $admin->email }}</td>
+                                                <td>{{ $admin->contact }}</td>
+                                                <td>{{ $admin->created_at->toFormattedDateString() }}</td>
+                                              </tr>
+
+                                           @endforeach
                                             
                                         </tbody>
                                     </table>

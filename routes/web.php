@@ -12,7 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    return redirect('/home');
 });
 
 Auth::routes(['register' => false]);
@@ -39,6 +40,8 @@ Route::group(['middleware' => ['auth', 'admin']], function() {
 
 	Route::get('admins', 'AdminController@index');
 	Route::get('admin/add', 'AdminController@showNewAdminForm');
+	Route::post('admin/add', 'AdminController@store')->name('admin.store');
 	Route::get('account', 'AdminController@account');
+	Route::put('change-password', 'AdminController@changePassword')->name('admin.pw');
 });
 

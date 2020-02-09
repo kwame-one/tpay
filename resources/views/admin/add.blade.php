@@ -3,15 +3,19 @@
 @section('title', 'Add Administrators')
 
 @section('css')
-    <link rel="apple-touch-icon" href="{{ asset('app-assets/images/ico/apple-icon-120.png') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="app-assets/images/ico/favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/vendors.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/dataTables.bootstrap4.min.css') }}">
+
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/extensions/sweetalert.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/fonts/simple-line-icons/style.min.css') }}">
     <!-- <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/weather-icons/climacons.min.css') }}"> -->
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/app.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/core/menu/menu-types/vertical-menu-modern.css') }}">
+
+    <style type="text/css">
+        .error {
+            color: red;
+        }
+    </style>
 
 @endsection
 
@@ -55,34 +59,46 @@
                             </div>
                             <div class="card-content collapse show">
                                 <div class="card-body card-dashboard">
-                                    <form class="form" method="post" action="#">
+                                    <form class="form" method="post" action="{{ route('admin.store') }}">
                                         @csrf
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="surname">Surname</label>
-                                                    <input type="text" name="surname" id="surname" class="form-control" required="">
+                                                    <input type="text" name="surname" id="surname" class="form-control" required value="{{ old('surname') }}">
+                                                    @if($errors->has('surname'))
+                                                        <span class="error">{{$errors->first('surname')}}</span>
+                                                    @endif
                                                 </div>
                                             </div>
 
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="other_names">Other Names</label>
-                                                    <input type="text" name="other_names" id="other_names" class="form-control" required="">
+                                                    <input type="text" name="other_names" id="other_names" class="form-control" required="" value="{{ old('other_names') }}">
+                                                    @if($errors->has('other_names'))
+                                                        <span class="error">{{$errors->first('other_names')}}</span>
+                                                    @endif
                                                 </div>
                                             </div>
 
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="email">Email</label>
-                                                    <input type="email" name="email" id="email" class="form-control" required="">
+                                                    <input type="email" name="email" id="email" class="form-control" required="" value="{{ old('email') }}">
+                                                    @if($errors->has('email'))
+                                                        <span class="error">{{$errors->first('email')}}</span>
+                                                    @endif
                                                 </div>
                                             </div>
 
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="contact">Contact</label>
-                                                    <input type="text" name="contact" id="contact" class="form-control" required="">
+                                                    <input type="text" name="contact" id="contact" class="form-control" required="" value="{{ old('contact') }}">
+                                                    @if($errors->has('contact'))
+                                                        <span class="error">{{$errors->first('contact')}}</span>
+                                                    @endif
                                                 </div>
                                             </div>
 
@@ -113,8 +129,15 @@
     <script src="{{ asset('app-assets/vendors/js/vendors.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('app-assets/js/core/app-menu.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('app-assets/vendors/js/extensions/sweetalert.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('app-assets/js/core/app.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/datatables.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('app-assets/js/scripts/tables/datatables/datatable-basic.min.js') }}" type="text/javascript"></script>
-    
+    <script src="{{ asset('app-assets/js/core/app.min.js') }}" type="text/javascript"></script> 
+
+    @if(session('error'))
+        <script type="text/javascript">
+            swal("Oops", 'Error adding admin', 'error');
+        </script>
+    @elseif(session('success'))
+        <script type="text/javascript">
+            swal('success', 'Admin added successfully', 'success');
+        </script>
+    @endif   
 @endsection

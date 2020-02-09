@@ -45,13 +45,17 @@
                             </div>
                             <div class="card-content collapse show">
                                 <div class="card-body card-dashboard">
-                                    <form class="form" method="post" action="#">
+                                    <form class="form" method="post" action="{{ route('admin.pw') }}">
+                                        <input name="_method" value="put" hidden>
                                         @csrf
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="old">Current Password</label>
                                                     <input type="password" name="old" id="old" class="form-control" required="">
+                                                    @if($errors->has('old'))
+                                                        <div style="color: red">{{ $errors->first('old') }}</div>
+                                                    @endif
                                                 </div>
                                             </div>
 
@@ -69,6 +73,9 @@
                                                 <div class="form-group">
                                                     <label for="password_confirmation">Retype Password</label>
                                                     <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required="">
+                                                    @if($errors->has('password_confirmation'))
+                                                        <div style="color: red">{{ $errors->first('password_confirmation') }}</div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -106,6 +113,10 @@
     @elseif(session('success'))
         <script type="text/javascript">
             swal('success', 'Password Changed Successfully', 'success');
+        </script>
+    @elseif(session('error'))
+        <script type="text/javascript">
+            swal('Oops', 'Error adding admin', 'error');
         </script>
     @endif
 
