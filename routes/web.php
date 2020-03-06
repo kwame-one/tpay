@@ -44,4 +44,3 @@ Route::group(['middleware' => ['auth', 'admin']], function() {
 	Route::get('account', 'AdminController@account');
 	Route::put('change-password', 'AdminController@changePassword')->name('admin.pw');
 });
-

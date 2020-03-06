@@ -6,10 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable, SoftDeletes;
+    use Notifiable, SoftDeletes, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'surname', 'other_names', 'contact', 'email', 'password', 'role_id', 'verification', 'verified'
+        'surname', 'other_names', 'contact', 'email', 'password', 'role_id', 'verification_code', 'verified'
     ];
 
     /**
@@ -38,8 +39,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function wallet() {
-        return $this->hasOne(Wallet::class, 'user_id');
+    public function userWallet() {
+        return $this->hasOne(UserWallet::class, 'user_id');
     }
 
     public function driver() {

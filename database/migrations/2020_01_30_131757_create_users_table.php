@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('contact')->unique();
             $table->string('email')->unique()->nullable();
             $table->string('password');
-            $table->string('verification')->nullable();
+            $table->string('verification_code')->nullable();
             $table->boolean('verified')->default(false);
             $table->unsignedBigInteger('role_id')->nullable();
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
