@@ -35,22 +35,28 @@ class ApiController extends Controller
     		return $this->results(['message' => 'wallet not found', 'data' => null], 404);
 
     	if($wallet->taken == 1)
-    		return $this->results(['message' => 'wallet taken', 'data' => null]);
+			return $this->results(['message' => 'wallet taken', 'data' => null]);
+			
+		$user = Auth::user();
 
-    	$userWallet = UserWallet::create([
-    		'user_id' => Auth::user()->id,
-			'wallet_id' => $wallet->id,
-			'status' => 1
-    	]);
-
-    	$wallet->update(['taken' => 1]);
+		if($user->userWallet){
+			$user->userWallet->update(['status' => 1]);
+		}else {
+			$userWallet = UserWallet::create([
+				'user_id' => $user->id,
+				'wallet_id' => $wallet->id,
+				'status' => 1
+			]);
+	
+			$wallet->update(['taken' => 1]);
+		}
 
     	return $this->results(['message' => 'wallet activated', 'data' => new UserWalletResource($userWallet)]);
    	}
 
 
    	public function deactivateWallet() {
-   		$wallet = Auth::user()->wallet;
+   		$wallet = Auth::user()->userWallet;
 
    		if(!$wallet)
    			return $this->results(['message' => 'you do not have a wallet', 'data' => null], 404);
@@ -60,7 +66,17 @@ class ApiController extends Controller
    		return $this->results(['message' => 'wallet deactivated', 'data' => null]);
 
 
-   	}
+	}
+	
+	public function checkWalletBalance() {
+		$wallet = Auth::user()->userWallet;
+
+		if(!$wallet)
+			return $this->results(['message' => 'wallet not found', 'data' => null], 404);
+		
+		return $this->results(['message' => 'balance', 'data' => new UserWalletResource($wallet)]);
+
+	}
 
 
    	public function getTransactions() {

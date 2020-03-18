@@ -23,16 +23,18 @@ Route::post('register', 'Api\Auth\AuthController@register');
 
 //-----------------USER ROUTES------------------------------//
 
-Route::group(['prefix' => 'user', 'middleware' => 'auth:api'], function() {
+Route::group(['prefix' => 'user', 'middleware' => 'auth:api', 'user'], function() {
 
     Route::post('wallet/activate', 'Api\ApiController@activateWallet');
+    Route::put('wallet/deactivate', 'Api\ApiController@deactivateWallet');
+    Route::get('wallet/balance', 'Api\ApiController@checkWalletBalance');
 
 });
 
 
 //-----------------DRIVER ROUTES------------------------------//
 
-Route::group(['prefix' => 'driver', 'middleware' => 'auth:api'], function() {
+Route::group(['prefix' => 'driver', 'middleware' => 'auth:api', 'user'], function() {
 
 	Route::post('save', 'Api\Auth\AuthController@saveDriverDetails');
 });

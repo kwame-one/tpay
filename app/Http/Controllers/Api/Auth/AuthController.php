@@ -55,13 +55,13 @@ class AuthController extends Controller
 
     	$user = User::where('contact', $request->contact)->first();
 
-    	if($user && Hash::check($request['password'], $user->password)) {
+    	if($user && Hash::check($request['password'], $user->password) && $user->role_id != 1) {
 			$user->token = $user->createToken('auth token')->accessToken;
 			
 			if($user->role_id == 2 && $user->driver == null)
 				return $this->results(['message' => 'driver not setup', 'data' => new AuthResource($user)]);
 
-			if($user->role_id == 3 && $user->wallet == null) 
+			if($user->role_id == 3 && $user->userWallet == null) 
 				return $this->results(['message' => 'wallet not set up', 'data' => new AuthResource($user)]);
 
     		return $this->results(['message' => 'login successful', 'data' => new AuthResource($user)]);
