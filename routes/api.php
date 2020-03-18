@@ -25,9 +25,12 @@ Route::post('register', 'Api\Auth\AuthController@register');
 
 Route::group(['prefix' => 'user', 'middleware' => 'auth:api', 'user'], function() {
 
-    Route::post('wallet/activate', 'Api\ApiController@activateWallet');
+    Route::put('wallet/setup', 'Api\ApiController@setupWallet');
+    Route::put('wallet/activate', 'Api\ApiController@activateWallet');
     Route::put('wallet/deactivate', 'Api\ApiController@deactivateWallet');
     Route::get('wallet/balance', 'Api\ApiController@checkWalletBalance');
+    
+    Route::put('password/change', 'Api\Auth\AuthController@changePassword');
 
 });
 
@@ -36,5 +39,7 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:api', 'user'], function(
 
 Route::group(['prefix' => 'driver', 'middleware' => 'auth:api', 'user'], function() {
 
-	Route::post('save', 'Api\Auth\AuthController@saveDriverDetails');
+    Route::post('save', 'Api\Auth\AuthController@saveDriverDetails');
+    
+    Route::put('password/change', 'Api\ApiController@changePassword');
 });

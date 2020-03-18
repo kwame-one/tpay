@@ -21,7 +21,7 @@ class ApiController extends Controller
     }
 
 
-   	public function activateWallet(Request $request) {
+   	public function setupWallet(Request $request) {
    		$validate = Validator::make($request->all(), [
    			'wallet' => 'required|numeric'
    		]);
@@ -36,24 +36,30 @@ class ApiController extends Controller
 
     	if($wallet->taken == 1)
 			return $this->results(['message' => 'wallet taken', 'data' => null]);
-			
-		$user = Auth::user();
+		
 
-		if($user->userWallet){
-			$user->userWallet->update(['status' => 1]);
-		}else {
-			$userWallet = UserWallet::create([
-				'user_id' => $user->id,
-				'wallet_id' => $wallet->id,
-				'status' => 1
-			]);
-	
-			$wallet->update(['taken' => 1]);
-		}
+		$userWallet = UserWallet::create([
+			'user_id' => Auth::user()->id,
+			'wallet_id' => $wallet->id,
+			'status' => 1
+		]);
+
+		$wallet->update(['taken' => 1]);
 
     	return $this->results(['message' => 'wallet activated', 'data' => new UserWalletResource($userWallet)]);
-   	}
+	}
+	   
 
+	public function activateWallet() {
+		$wallet = Auth::user()->userWallet;
+
+		if(!$wallet)
+			return $this->results(['message' => 'you do not have any wallet', 'data' => null]);
+
+		$wallet->update(['status' => 1]);
+
+		return $this->results(['message' => 'wallet activated', 'data' => null]);
+	}
 
    	public function deactivateWallet() {
    		$wallet = Auth::user()->userWallet;

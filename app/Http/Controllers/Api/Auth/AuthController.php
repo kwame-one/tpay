@@ -96,6 +96,25 @@ class AuthController extends Controller
         if($driver)
             return $this->results(['message' => 'driver details saved', 'data' => new DriverResource($driver)]);
 
-    }
+	}
+	
+	public function changePassword(Request $request) {
+		$validate = Validator::make($request->all(), [
+			'old_password' => 'required',
+			'password' => 'required|confirmed',
+		]);
+
+		if($validate->fails())
+			return $this->validateError($validate->getMessageBag()->first());
+
+		$user = Auth::user();
+
+		if(!Hash::check($request->password, $user->password)) 
+			return $this->results(['message' => 'invalid password', 'data' => null], 401);
+
+		$user->update(['password' => Hash::make($request->password)]);
+
+		return $this->results(['message'=> 'password changed successfully', 'data' => null]);
+	}
 
 }
