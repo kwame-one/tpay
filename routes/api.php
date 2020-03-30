@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('login', 'Api\Auth\AuthController@login');
 Route::post('register', 'Api\Auth\AuthController@register');
+Route::put('password/change', 'Api\Auth\AuthController@changePassword')->middleware('auth:api');
 
 
 //-----------------USER ROUTES------------------------------//
@@ -30,7 +31,6 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth:api', 'user'], function(
     Route::put('wallet/deactivate', 'Api\ApiController@deactivateWallet');
     Route::get('wallet/balance', 'Api\ApiController@checkWalletBalance');
     
-    Route::put('password/change', 'Api\Auth\AuthController@changePassword');
 
 });
 
