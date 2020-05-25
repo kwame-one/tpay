@@ -13,33 +13,46 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('login', 'Api\Auth\AuthController@login');
 Route::post('register', 'Api\Auth\AuthController@register');
-Route::put('password/change', 'Api\Auth\AuthController@changePassword')->middleware('auth:api');
 
 
-//-----------------USER ROUTES------------------------------//
-
-Route::group(['prefix' => 'user', 'middleware' => 'auth:api', 'user'], function() {
-
-    Route::put('wallet/setup', 'Api\ApiController@setupWallet');
-    Route::put('wallet/activate', 'Api\ApiController@activateWallet');
-    Route::put('wallet/deactivate', 'Api\ApiController@deactivateWallet');
-    Route::get('wallet/balance', 'Api\ApiController@checkWalletBalance');
-    
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::get('transactions', 'Api\ApiController@getTransactions');
+    Route::put('change_password', 'Api\Auth\AuthController@changePassword');
 
 });
 
 
-//-----------------DRIVER ROUTES------------------------------//
 
-Route::group(['prefix' => 'driver', 'middleware' => 'auth:api', 'user'], function() {
+Route::group(['middleware' => 'auth:api', 'user'], function() {
 
-    Route::post('save', 'Api\Auth\AuthController@saveDriverDetails');
-    
-    Route::put('password/change', 'Api\ApiController@changePassword');
+
+    //-----------------USER ROUTES------------------------------//
+
+    Route::group(['prefix' => 'user'], function () {
+
+        Route::put('wallet/setup', 'Api\ApiController@setupWallet');
+        Route::put('wallet/activate', 'Api\ApiController@activateWallet');
+        Route::put('wallet/deactivate', 'Api\ApiController@deactivateWallet');
+        Route::get('wallet/balance', 'Api\ApiController@checkWalletBalance');
+
+        Route::get('expenses', 'Api\ApiController@getExpenses');
+
+    });
+
+
+    //-----------------DRIVER ROUTES------------------------------//
+
+    Route::group(['prefix' => 'driver'], function () {
+
+        Route::post('save', 'Api\Auth\AuthController@saveDriverDetails');
+
+        Route::post('accept_payment','Api\ApiController@acceptPayment');
+    });
+
+
 });
+
+
+

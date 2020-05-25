@@ -20,10 +20,10 @@ class UserAuth
 
         if(!$user || $user->role_id == 1)
             return response([
-                'status' => 'unauthenticated',
-                'message' => "invalid credentials",
+                'status' => 'forbidden',
+                'message' => "access denied",
                 'data' => null
-            ], 401);
+            ], 403);
 
         return $next($request);
     }
