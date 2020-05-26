@@ -3,15 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AuthResource;
+use App\Http\Resources\DriverResource;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserWalletResource;
 use App\Wallet;
 use App\UserWallet;
 use App\Http\Resources\TransactionResource;
+use App\Http\Resources\UserResource;
 use App\Payment;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ApiController extends Controller
 {
@@ -103,7 +107,7 @@ class ApiController extends Controller
 
 	public function acceptPayment(Request $r) {
 		$validate = Validator::make($r->all(), [
-			'wallet_id' => 'required|integer,exits:user_wallets',
+			'wallet_id' => 'required|integer|exists:user_wallets',
 			'amount' => 'required|numeric'
 		]);
 
@@ -140,6 +144,56 @@ class ApiController extends Controller
 
 
     }
+
+    /**
+     * Update user details
+     *
+     * @param Request $request
+     * @return Object
+     */
+    public function updateUserDetails(Request $request) {
+        $validate = Validator::make($request->all(), [
+            'other_names' => 'required|string',
+            'surname' => 'required|string',
+            'vehicle_number' => ['nullable', Rule::requiredIf(auth()->user()->isDriver())],
+            'vehicle_model' => ['nullable', Rule::requiredIf(auth()->user()->isDriver())]
+        ]);
+
+        if($validate->fails())
+            return $this->validateError($validate->getMessageBag()->first());
+
+        $user = Auth::user();
+
+        $user->update([
+            'other_names' => $request->other_names,
+            'surname' => $request->surname,
+        ]);
+
+        if($user->isDriver()) {
+            $user->driver->update([
+                'vehicle_model' => $request->vehicle_model,
+                'vehicle_number' => $request->vehicle_number
+            ]);
+        }
+
+
+        return $this->results(['message' => 'details updated', 'data' => new UserResource($user->fresh())]);
+
+    }
+
+
+    /**
+     * Get Driver's account Balance
+     *
+     * @return Object
+     */
+    public function getDriverAccountBalance() {
+        $driver = Auth::user()->driver;
+
+        return $this->results(['message' => 'account balance', 'data' => new DriverResource($driver)]);
+    }
+
+
 
     /**
      * View expenses

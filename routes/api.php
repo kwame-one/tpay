@@ -17,15 +17,11 @@ Route::post('login', 'Api\Auth\AuthController@login');
 Route::post('register', 'Api\Auth\AuthController@register');
 
 
-Route::group(['middleware' => 'auth:api'], function() {
+Route::group(['middleware' => 'auth:api', 'user'], function() {
+
     Route::get('transactions', 'Api\ApiController@getTransactions');
     Route::put('change_password', 'Api\Auth\AuthController@changePassword');
-
-});
-
-
-
-Route::group(['middleware' => 'auth:api', 'user'], function() {
+    Route::put('update_details', 'Api\ApiController@updateUserDetails');
 
 
     //-----------------USER ROUTES------------------------------//
@@ -47,8 +43,8 @@ Route::group(['middleware' => 'auth:api', 'user'], function() {
     Route::group(['prefix' => 'driver'], function () {
 
         Route::post('save', 'Api\Auth\AuthController@saveDriverDetails');
-
         Route::post('accept_payment','Api\ApiController@acceptPayment');
+        Route::get('balance', 'Api\ApiController@getDriverAccountBalance');
     });
 
 
