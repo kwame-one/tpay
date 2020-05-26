@@ -18,6 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->string('type')->comment('payment deposit withdrawal ');
             $table->string('code');
             $table->double('total');
+            $table->integer('status')->default(0)->comment('0-pending 1-success 2-failed');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

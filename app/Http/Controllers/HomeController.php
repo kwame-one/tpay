@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Payment;
 use Illuminate\Http\Request;
 use App\User;
 use App\Wallet;
@@ -38,7 +39,11 @@ class HomeController extends Controller
         $deactivatedWallets = UserWallet::where('status', 0)->count();
         $deposits = Transaction::where('type', 'deposit')->count();
         $withdrawals = Transaction::where('type', 'withdrawal')->count();
+        $payments = Payment::count();
 
-        return view('home', compact('users', 'drivers', 'wallets', 'takenWallets', 'activatedWallets', 'deactivatedWallets', 'deposits', 'withdrawals', 'unUsedWallets'));
+        return view('home', compact(
+            'users', 'drivers', 'wallets', 'takenWallets', 'activatedWallets',
+            'deactivatedWallets', 'deposits', 'withdrawals', 'unUsedWallets',
+            'payments'));
     }
 }

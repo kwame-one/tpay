@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/vendors.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/weather-icons/climacons.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/charts/apexcharts.css') }}">
-   
+
     <!-- END: Vendor CSS-->
 
     <!-- BEGIN: Theme CSS-->
@@ -36,7 +36,7 @@
             <div class="content-header row">
             </div>
             <div class="content-body">
-          
+
                 <div class="row grouped-multiple-statistics-card">
                     <div class="col-12">
                       <div class="card">
@@ -82,8 +82,8 @@
                                   <i class="icon p-1 icon-wallet customize-icon font-large-2 p-1"></i>
                                 </span>
                                 <div class="stats-amount mr-3">
-                                  <h3 class="heading-text text-bold-600">{{ $takenWallets }}</h3>
-                                  <p class="sub-heading">Used Wallets</p>
+                                  <h3 class="heading-text text-bold-600">{{ $payments }}</h3>
+                                  <p class="sub-heading">Total Payments</p>
                                 </div>
                               </div>
                             </div>
@@ -151,7 +151,7 @@
                     </div>
                 </div>
 
-             
+
 
               <div class="row match-height">
                   <div class="col-xl-6 col-lg-12">
@@ -189,7 +189,7 @@
                             <div class="card-header">
                                 <div class="row">
                                   <div class="col-6 col-xs-6">
-                                    <h4 class="card-title">Deposits and Withdrawals Statistics</h4> 
+                                    <h4 class="card-title">Deposits and Withdrawals Statistics</h4>
                                   </div>
                                   <div class="col-6 col-xs-6" align="right">
                                     <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" class="form-control col-lg-6"/>
