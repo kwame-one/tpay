@@ -49,7 +49,7 @@
       .main-menu.menu-dark .navigation > li.open .hover > a {
         background: #4D0096 !important;;
       }
-      
+
     </style> -->
   </head>
   <body class="vertical-layout vertical-menu-modern 2-columns   menu-expanded fixed-navbar" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
@@ -74,7 +74,11 @@
             <ul class="nav navbar-nav float-right">
               <li class="dropdown dropdown-user nav-item"><a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown"><span class="avatar avatar-online"><img src="{{ asset('img/person.jpg') }}" alt="avatar"><i></i></span><span class="user-name">{{ Auth::user()->surname }} {{ Auth::user()->other_names }}</span></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                  <a class="dropdown-item" href="#"><i class="ft-power"></i> Logout</a>
+                <a class="dropdown-item" href="{{route('logout')}}" onclick="event.preventDefault();
+                  document.getElementById('logout-form').submit();"><i class="ft-power"></i> Logout</a>
+                  <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                  </form>
                 </div>
               </li>
             </ul>
@@ -91,10 +95,10 @@
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
          <!--  <li class=" navigation-header"><span>General</span><i class=" ft-minus" data-toggle="tooltip" data-placement="right" data-original-title="General"></i>
           </li> -->
-         
+
           <li class="@if(Request::is('home')) {{'active'}} @endif nav-item"><a href="{{ route('home') }}"><i class="fa fa-home"></i><span class="menu-title" data-i18n="">Dashboard</span></a>
           </li>
-          
+
           <li class="nav-item"><a href="#"><i class="fa fa-qrcode"></i><span class="menu-title" data-i18n="">Digital Wallets</span></a>
             <ul class="menu-content">
               <li class="@if(Request::is('wallets/generate')) {{'active'}} @endif"><a class="menu-item" href="{{ route('wallet.generate') }}">Generate</a>
@@ -107,7 +111,7 @@
               </li>
             </ul>
           </li>
-    
+
           <li class="@if(Request::is('payments')) {{'active'}} @endif nav-item"><a href="{{ url('payments') }}"><i class="fa fa-money"></i><span class="menu-title" data-i18n="">Payments</span></a>
           </li>
 
@@ -142,14 +146,14 @@
     </div>
 
     @yield('content')
-    
+
     <!-- ////////////////////////////////////////////////////////////////////////////-->
     <footer class="footer footer-static footer-light navbar-border">
       <p class="clearfix blue-grey lighten-2 text-sm-center mb-0 px-2"><span class="float-md-left d-block d-md-inline-block">Copyright  &copy; 2020 Final Year Project, All rights reserved. </p>
     </footer>
 
    @yield('js')
-   
+
   </body>
 
 </html>
