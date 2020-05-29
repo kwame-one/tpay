@@ -19,8 +19,9 @@ class TransactionResource extends JsonResource
         return [
             'id' => $this->id,
             'total' => $this->total,
+            'status' => $this->status,
             'code' => $this->code,
-            'type' => ucwords($this->type), 
+            'type' => ucwords($this->type),
             'date' => $this->created_at->toFormattedDateString()
         ];
     }

@@ -23,6 +23,8 @@ Route::group(['middleware' => 'auth:api', 'user'], function() {
     Route::put('change_password', 'Api\Auth\AuthController@changePassword');
     Route::put('update_details', 'Api\ApiController@updateUserDetails');
 
+    Route::put('save_token', 'Api\ApiController@updateFcmToken');
+
 
     //-----------------USER ROUTES------------------------------//
 

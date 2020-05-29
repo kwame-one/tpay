@@ -68,6 +68,7 @@
                                                 <th>Transaction Type</th>
                                                 <th>Transaction Id</th>
                                                 <th>Total (GHS)</th>
+                                                <th>Status</th>
                                                 <th>Date</th>
                                             </tr>
                                         </thead>
@@ -79,11 +80,12 @@
                                                   <td>{{ $t->type }}</td>
                                                   <td>{{ $t->code }}</td>
                                                   <td>{{ $t->total }}</td>
+                                                    <td>{{ $t->status }}</td>
                                                   <td>{{ $t->created_at->toFormattedDateString() }}</td>
                                                 </tr>
 
                                             @endforeach
-                                            
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -106,5 +108,5 @@
     <script src="{{ asset('app-assets/js/core/app.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/datatables.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('app-assets/js/scripts/tables/datatables/datatable-basic.min.js') }}" type="text/javascript"></script>
-    
+
 @endsection

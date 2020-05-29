@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->boolean('verified')->default(false);
             $table->unsignedBigInteger('role_id')->nullable();
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
+            $table->string('fcm_token')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

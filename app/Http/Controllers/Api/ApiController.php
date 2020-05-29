@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Wallet;
+use App\UserWallet;
+use App\Payment;
+use App\Traits\Utils;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AuthResource;
 use App\Http\Resources\DriverResource;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserWalletResource;
-use App\Wallet;
-use App\UserWallet;
 use App\Http\Resources\TransactionResource;
 use App\Http\Resources\UserResource;
-use App\Payment;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -19,6 +20,20 @@ use Illuminate\Validation\Rule;
 
 class ApiController extends Controller
 {
+    use Utils;
+
+    public function updateFcmToken(Request $r) {
+        $validate = Validator::make($r->all(), [
+            'token' => 'required|'
+        ]);
+
+        if($validate->fails())
+         return $this->validateError($validate->getMessageBag()->first());
+
+        auth()->user()->update(['fcm_token' => $r->token]);
+
+        return $this->results(['message' => 'token updated', 'data' => null]);
+    }
 
 	//get user wallet
     public function myWallet() {
