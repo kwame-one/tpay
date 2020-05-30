@@ -59,4 +59,8 @@ class User extends Authenticatable
     public function isDriver(){
         return $this->role_id == 2;
     }
+
+    public function isNormalUser() {
+        return $this->role_id == 3;
+    }
 }

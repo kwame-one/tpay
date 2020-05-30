@@ -9,7 +9,7 @@ class Transaction extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['type', 'code', 'total', 'user_id', 'status'];
+    protected $fillable = ['type', 'code', 'total', 'user_id', 'status', 'phone'];
 
     public function user() {
     	return $this->belongsTo(User::class, 'user_id');

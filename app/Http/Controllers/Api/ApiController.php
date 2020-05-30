@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\UserWalletResource;
 use App\Http\Resources\TransactionResource;
 use App\Http\Resources\UserResource;
+use App\Transaction;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -222,6 +223,105 @@ class ApiController extends Controller
         }
 
         $expenses = Payment::all();
+    }
+
+
+    /**
+     * Credit digital wallet
+     *
+     * @param Request $request
+     * @return Object
+     */
+    public function creditWallet(Request $request) {
+        $validate = Validator::make($request->all(), [
+            'amount' => ['required', 'numeric'],
+            'phone' => ['required', 'regex:/^[0-9]{10}$/'],
+            'token' => ['nullable', Rule::requiredIf(function() {
+                $phone = substr(request('phone'), 0, 3);
+                return $phone === "050" || $phone == "020";
+            })]
+        ]);
+
+        if($validate->fails())
+            return $this->validateError($validate->getMessageBag()->first());
+
+
+        $status = $this->payViaMomo(
+            $request['phone'],
+            $request['amount']
+        );
+
+        if(!$status)
+            return $this->results([
+                'message' => 'payment not initialized initialized',
+                'data' => null], Response::HTTP_BAD_REQUEST);
+
+        return $this->results(['message' => 'payment initialized', 'data' => null]);
+    }
+
+    /**
+     * Withdraw revenue
+     *
+     * @param Request $request
+     * @return Object
+     */
+    public function withdraw(Request $request) {
+
+        $validate = Validator::make($request->all(), [
+            'amount' => ['required', 'numeric'],
+            'phone' => ['required', 'regex:/^[0-9]{10}$/'],
+        ]);
+
+        if($validate->fails())
+            return $this->validateError($validate->getMessageBag()->first());
+
+
+        if(auth()->user()->driver->balance < $request['amount']) {
+            return $this->results([
+                'message' => 'not enough balance',
+                'data' => null,
+            ], Response::HTTP_PAYMENT_REQUIRED);
+        }
+
+
+        $status = $this->withdrawViaMomo(
+            $request['phone'],
+            $request['amount']
+        );
+
+        if(!$status)
+            return $this->results([
+                'message' => 'transfer not initialized initialized',
+                'data' => null], Response::HTTP_BAD_REQUEST);
+
+        return $this->results(['message' => 'transfer initialized', 'data' => null]);
+    }
+
+
+    /**
+     * Payment callback
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function callback(Request $request) {
+        $transaction = auth()->user()->transactions()->where('code', $request['txRef'])->first();
+
+        if(!$transaction)
+            return;
+
+        if(strtolower($transaction->status) == "success")
+            return;
+
+        if(strtolower($request['status']) === "successful") {
+            $transaction->update(['status'=> 1]);
+
+            if(strtolower( $transaction->type == "deposit")) {
+                auth()->user()->userWallet->increment('balance', $transaction->total);
+            }else {
+                auth()->user()->driver->decrement('balance', $transaction->total);
+            }
+        }
     }
 
 
