@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 Route::post('login', 'Api\Auth\AuthController@login');
 Route::post('register', 'Api\Auth\AuthController@register');
+Route::post('callback', 'Api\ApiController@callback');
 
 
 Route::group(['middleware' => 'auth:api'], function () {
@@ -23,7 +24,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('transactions', 'Api\ApiController@getTransactions');
     Route::put('change_password', 'Api\Auth\AuthController@changePassword');
     Route::put('update_details', 'Api\ApiController@updateUserDetails');
-    Route::post('callback', 'Api\ApiController@callback');
+
 
 });
 
@@ -43,7 +44,6 @@ Route::group(['middleware' => ['auth:api', 'normal'], 'prefix' => 'user'], funct
 
 
 Route::group(['middleware' => ['auth:api, driver'], 'prefix' => 'driver'], function() {
-
 
     Route::post('withdraw', 'Api\ApiController@withdraw');
     Route::post('save', 'Api\Auth\AuthController@saveDriverDetails');

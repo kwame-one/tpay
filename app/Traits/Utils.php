@@ -24,11 +24,12 @@ trait Utils {
     }
 
 
-    public function payViaMomo($phone, $amount, $voucher = null) {
+    public function payViaMomo($phone, $amount, $voucher = "") {
 
         $transction_id = time() . mt_rand() . auth()->user()->id;
 
         $network = $this->getNetwork($phone);
+
 
         $data = array(
             'PBFPubKey' => env('PUBLIC_KEY'),
@@ -141,8 +142,7 @@ trait Utils {
 
 
 
-    public function notifyUser($title, $msg) {
-        $token = auth()->user()->fcm_token;
+    public function notifyUser($title, $msg, $token) {
 
         $server_key = env('SERVER_KEY');
 
@@ -161,8 +161,9 @@ trait Utils {
                 "Content-Type: application/json",
             );
 
-            $this->makeHttpRequest("https://fcm.googleapis.com/fcm/send", "POST", $data, $headers);
+            $status = $this->makeHttpRequest("https://fcm.googleapis.com/fcm/send", "POST", $data, $headers);
 
+            return $status ? true : false;
 
         }
     }

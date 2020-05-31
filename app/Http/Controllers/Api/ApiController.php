@@ -251,6 +251,7 @@ class ApiController extends Controller
             $request['amount']
         );
 
+
         if(!$status)
             return $this->results([
                 'message' => 'payment not initialized initialized',
@@ -305,7 +306,7 @@ class ApiController extends Controller
      * @return void
      */
     public function callback(Request $request) {
-        $transaction = auth()->user()->transactions()->where('code', $request['txRef'])->first();
+        $transaction = Transaction::where('code', $request['txRef'])->first();
 
         if(!$transaction)
             return;
@@ -317,12 +318,26 @@ class ApiController extends Controller
             $transaction->update(['status'=> 1]);
 
             if(strtolower( $transaction->type == "deposit")) {
-                auth()->user()->userWallet->increment('balance', $transaction->total);
+                $transaction->user->userWallet->increment('balance', $transaction->total);
             }else {
-                auth()->user()->driver->decrement('balance', $transaction->total);
+                $transaction->user->driver->decrement('balance', $transaction->total);
             }
+
+            $this->notifyUser(
+                "TPAY",
+                "Your wallet has been successfully credited with GHS $transaction->total",
+                $transaction->user->fcm_token);
+        }else {
+            $transaction->update(['status'=> 2]);
+
+            $this->notifyUser(
+                "TPAY",
+                "Wallet could not be credited   ",
+                $transaction->user->fcm_token
+            );
         }
     }
+
 
 
 }
