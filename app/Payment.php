@@ -20,6 +20,15 @@ class Payment extends Model
     	return $this->belongsTo(Driver::class, 'driver_id');
     }
 
+    /**
+     * Get the total attribute
+     *
+     * @return string
+     */
+    public function getTotalAttribute() {
+        return $this->amount + $this->luggage;
+    }
+
 
 
 }

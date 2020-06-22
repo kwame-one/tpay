@@ -5,19 +5,22 @@ namespace App\Http\Controllers\Api;
 use App\Wallet;
 use App\UserWallet;
 use App\Payment;
+use App\Transaction;
 use App\Traits\Utils;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\AuthResource;
-use App\Http\Resources\DriverResource;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\DriverResource;
+use App\Http\Resources\ExpenseResource;
 use App\Http\Resources\UserWalletResource;
 use App\Http\Resources\TransactionResource;
-use App\Http\Resources\UserResource;
-use App\Transaction;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+
 
 class ApiController extends Controller
 {
@@ -215,14 +218,25 @@ class ApiController extends Controller
      * View expenses
      *
      * @param Request $r
-     * @return Object
+     * @return JsonResponse
      */
     public function getExpenses(Request $r) {
-        if($r->has('month') && !empty($r->month)) {
-
+        $expenses = Payment::query();
+        if($r->has('start') && !empty($r['start'])) {
+            $expenses = $expenses->whereDate('created_at', '>=', $r['start']);
         }
 
-        $expenses = Payment::all();
+        if($r->has('end') && !empty($r['end'])) {
+            $expenses = $expenses->whereDate('created_at', '<=', $r['end']);
+        }
+
+        $expenses = $expenses->orderBy('created_at', 'desc')->get();
+
+        return $this->results([
+            'message' => 'your expenses',
+            'data' => ExpenseResource::collection($expenses)
+        ]);
+
     }
 
 
@@ -263,7 +277,7 @@ class ApiController extends Controller
      * Withdraw revenue
      *
      * @param Request $request
-     * @return Object
+     * @return JsonResponse
      */
     public function withdraw(Request $request) {
 
@@ -345,7 +359,7 @@ class ApiController extends Controller
 
             $this->notifyUser(
                 "TPAY",
-                "Wallet could not be credited   ",
+                "Wallet could not be credited",
                 $transaction->user->fcm_token
             );
         }
