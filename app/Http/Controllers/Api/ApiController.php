@@ -246,18 +246,17 @@ class ApiController extends Controller
             return $this->validateError($validate->getMessageBag()->first());
 
 
-        $status = $this->payViaMomo(
+        $response = $this->payViaMomo(
             $request['phone'],
             $request['amount']
         );
 
-
-        if(!$status)
+        if(!$response)
             return $this->results([
                 'message' => 'payment not initialized initialized',
                 'data' => null], Response::HTTP_BAD_REQUEST);
 
-        return $this->results(['message' => 'payment initialized', 'data' => null]);
+        return $response;
     }
 
     /**
@@ -276,6 +275,9 @@ class ApiController extends Controller
         if($validate->fails())
             return $this->validateError($validate->getMessageBag()->first());
 
+
+        if(!auth()->user()->driver)
+        return $this->results(['message' => 'driver details not found', 'data' => null], Response::HTTP_NOT_FOUND);
 
         if(auth()->user()->driver->balance < $request['amount']) {
             return $this->results([
@@ -306,7 +308,8 @@ class ApiController extends Controller
      * @return void
      */
     public function callback(Request $request) {
-        $transaction = Transaction::where('code', $request['txRef'])->first();
+        $transaction = Transaction::where('code', $request['txRef'])
+            ->orWhere('code', $request['transfer']['reference'])->first();
 
         if(!$transaction)
             return;
@@ -314,19 +317,29 @@ class ApiController extends Controller
         if(strtolower($transaction->status) == "success")
             return;
 
-        if(strtolower($request['status']) === "successful") {
+        $transaction_type = strtolower($transaction->type);
+
+        if($transaction_type == "deposit" && strtolower($request['status']) === "successful") {
             $transaction->update(['status'=> 1]);
 
-            if(strtolower( $transaction->type == "deposit")) {
-                $transaction->user->userWallet->increment('balance', $transaction->total);
-            }else {
-                $transaction->user->driver->decrement('balance', $transaction->total);
-            }
+            $transaction->user->userWallet->increment('balance', $transaction->total);
 
             $this->notifyUser(
                 "TPAY",
                 "Your wallet has been successfully credited with GHS $transaction->total",
                 $transaction->user->fcm_token);
+
+        }else if($transaction_type == "withdrawal" && strtolower($request['transfer']['status']) == "successful") {
+
+            $transaction->user->driver->decrement('balance', $transaction->total);
+
+            $transaction->update(['status'=> 1]);
+
+            $this->notifyUser(
+                "TPAY",
+                "You have successfully withdrawn GHS $transaction->total from your wallet.",
+                $transaction->user->fcm_token);
+
         }else {
             $transaction->update(['status'=> 2]);
 

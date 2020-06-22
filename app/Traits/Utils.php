@@ -11,7 +11,7 @@ trait Utils {
 
         if(in_array($net, ["020", "050"])) {
             $network = "VODAFONE";
-        }else if(in_array($net, ["024", "054", "055"])) {
+        }else if(in_array($net, ["024", "054", "055", "059"])) {
             $network = "MTN";
         }else if(in_array($net, ["027", "057"])) {
             $network = "TIGO";
@@ -31,7 +31,7 @@ trait Utils {
         $network = $this->getNetwork($phone);
 
 
-        $data = array(
+        $data = [
             'PBFPubKey' => env('PUBLIC_KEY'),
             'currency' => 'GHS',
             'country' => 'GH',
@@ -43,8 +43,9 @@ trait Utils {
             'email' => 'alexfreeman221@gmail.com',
             'txRef' => $transction_id,
             'orderRef' => 'Credit TPAY Wallet',
+            'redirect_url' => 'http://51.141.36.140/api/callback',
             'is_mobile_money_gh' => 1,
-        );
+        ];
 
 
         $key = $this->getKey(env("SECRET_KEY"));
@@ -58,12 +59,13 @@ trait Utils {
             'client' => $post_enc,
             'alg' => '3DES-24');
 
-        $status = $this->makeHttpRequest(
+        $response = json_decode($this->makeHttpRequest(
             "https://api.ravepay.co/flwv3-pug/getpaidx/api/charge",
             "POST", $postdata, array('Content-Type: application/json')
-        );
+        ), true);
 
-        if($status) {
+
+        if(strtolower($response['status']) == "success") {
             Transaction::create([
                 'code' => $transction_id,
                 'type' => 'deposit',
@@ -72,7 +74,7 @@ trait Utils {
                 'phone' => $data['phonenumber']
             ]);
 
-            return true;
+            return $response;
         }
 
         return false;
@@ -83,19 +85,20 @@ trait Utils {
     public function withdrawViaMomo($phone, $amount) {
         $network = $this->getNetwork($phone);
 
-        $phone = "233". substr($phone, 1);
+        $long_phone = "233". substr($phone, 1);
 
         $user = auth()->user();
         $transction_id = time() . mt_rand() . auth()->user()->id;
 
         $data = [
             'account_bank' => $network,
-            'account_number' => $phone,
+            'account_number' => $long_phone,
             'amount' => $amount,
-            'secKey' => env('SERVER_KEY'),
+            'seckey' => env('SECRET_KEY'),
             "narration" => 'New Transfer',
             'currency' => "GHS",
-            'reference' => 'Withdrawal',
+            "callback_url" => "http://51.141.36.140/api/callback",
+            'reference' => $transction_id,
             'beneficiary_name' => "$user->surname $user->other_names"
         ];
 
@@ -104,13 +107,14 @@ trait Utils {
             "POST", $data,  array('Content-Type: application/json')
         );
 
+
         if($status) {
             Transaction::create([
                 'code' => $transction_id,
                 'type' => 'withdrawal',
                 'total' => $data['amount'],
                 'user_id' => auth()->user()->id,
-                'phone' => $data['account_number']
+                'phone' => $phone
             ]);
 
             return true;
