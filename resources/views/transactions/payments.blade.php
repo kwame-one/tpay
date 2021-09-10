@@ -36,7 +36,7 @@
           </div>
           <div class="content-header-right col-md-6 col-12">
             <div class="btn-group float-md-right" role="group" aria-label="Button group with nested dropdown">
-              <div class="btn-group" role="group">
+              <div class="btn-group" role="group" hidden>
                 <a href="#" target="_blank" class="btn btn-outline-primary"><i class="ft-download icon-left"></i> Download</a>
               </div>
             </div>
@@ -85,7 +85,7 @@
                                               </tr>
 
                                            @endforeach
-                                            
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -108,5 +108,5 @@
     <script src="{{ asset('app-assets/js/core/app.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/datatables.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('app-assets/js/scripts/tables/datatables/datatable-basic.min.js') }}" type="text/javascript"></script>
-    
+
 @endsection

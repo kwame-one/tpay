@@ -33,9 +33,11 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 Route::group(['middleware' => ['auth:api', 'normal'], 'prefix' => 'user'], function() {
 
+Route::post('wallet/setup', 'Api\ApiController@setupWallet');
+
     Route::post('deposit', 'Api\ApiController@creditWallet');
     Route::get('expenses', 'Api\ApiController@getExpenses');
-    Route::put('wallet/setup', 'Api\ApiController@setupWallet');
+
     Route::put('wallet/activate', 'Api\ApiController@activateWallet');
     Route::put('wallet/deactivate', 'Api\ApiController@deactivateWallet');
     Route::get('wallet/balance', 'Api\ApiController@checkWalletBalance');

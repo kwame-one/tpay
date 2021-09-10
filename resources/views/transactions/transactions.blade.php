@@ -36,7 +36,7 @@
           </div>
           <div class="content-header-right col-md-6 col-12">
             <div class="btn-group float-md-right" role="group" aria-label="Button group with nested dropdown">
-              <div class="btn-group" role="group">
+              <div class="btn-group" role="group" hidden>
                 <a href="#" target="_blank" class="btn btn-outline-primary"><i class="ft-download icon-left"></i> Download</a>
               </div>
             </div>
